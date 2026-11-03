@@ -13,54 +13,96 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: 拉取上游配置
+      - name: 拉取上游配置与影视源聚合配置
         run: |
-          curl -sL -o up.json \
+          curl -sL -o up_official.json \
             https://raw.githubusercontent.com/FongMi/CatVodSpider/main/json/config.json
-          ls -la up.json
+          curl -sL -o box_m_raw.json \
+            https://raw.githubusercontent.com/liu673cn/box/main/m.json
+          curl -sL -o box.tar.gz \
+            https://codeload.github.com/liu673cn/box/tar.gz/refs/heads/main
+          tar xzf box.tar.gz
+          rm -rf libs fty.jar
+          cp -r box-main/libs ./libs
+          cp box-main/fty.jar ./fty.jar
+          rm -rf box-main box.tar.gz
+          ls -la
 
-      - name: 过滤广告站点 + 注入 ads 名单
+      - name: 合并影视源 + 过滤 + 注入 ads
         run: |
           python3 - <<'EOF'
-          import json
+          import json, hashlib
 
           BLOCK = {
               # "站点A",
-              # "站点B",
           }
-
           ADS = [
               # "ads.example.com",
           ]
 
-          c = json.load(open('up.json', encoding='utf-8'))
+          official = json.load(open('up_official.json', encoding='utf-8'))
+          raw_lines = open('box_m_raw.json', encoding='utf-8').read().split('\n')
+          box = json.loads("\n".join(ln for ln in raw_lines if not ln.lstrip().startswith('//')))
 
-          removed = []
-          if isinstance(c.get('sites'), list):
-              kept = []
-              for s in c['sites']:
-                  nm = s.get('name') or s.get('key') or ''
-                  if nm in BLOCK:
-                      removed.append(nm)
-                      continue
-                  kept.append(s)
-              c['sites'] = kept
+          KEYS = set()
+          for s in official.get('sites', []):
+              if s.get('key'):
+                  KEYS.add(s['key'])
+
+          kept, removed_block, removed_lib = [], [], []
+          for s in box.get('sites', []):
+              nm = s.get('name') or s.get('key') or ''
+              if nm in BLOCK:
+                  removed_block.append(nm)
+                  continue
+              if s.get('key') in KEYS:
+                  continue
+              bad = False
+              for fld in ('jar', 'api', 'ext'):
+                  v = s.get(fld)
+                  if isinstance(v, str) and v.startswith('./lib/'):
+                      bad = True
+                  elif isinstance(v, dict):
+                      bad = any(isinstance(x, str) and x.startswith('./lib/') for x in v.values())
+                  if bad:
+                      break
+              if bad:
+                  removed_lib.append(nm)
+                  continue
+              kept.append(s)
+
+          c = json.loads(json.dumps(official))
+          c['sites'] = official['sites'] + kept
 
           c.setdefault('ads', [])
           for d in ADS:
               if d not in c['ads']:
                   c['ads'].append(d)
 
+          md5_o = hashlib.md5(open('jar/custom_spider.jar', 'rb').read()).hexdigest()
+          md5_f = hashlib.md5(open('fty.jar', 'rb').read()).hexdigest()
+          c['spider'] = f"./jar/custom_spider.jar;md5;{md5_o};./fty.jar;md5;{md5_f}"
+
           json.dump(c, open('config.json', 'w', encoding='utf-8'),
                     ensure_ascii=False, indent=2)
-          print('removed:', removed)
+          print('影视站点保留:', len(kept))
+          print('拉黑跳过:', removed_block)
+          print('依赖lib跳过:', len(removed_lib))
+          print('spider:', c['spider'])
           EOF
 
       - name: 提交
         run: |
           git config user.name bot
           git config user.email bot@example.com
-          git add config.json
+          git add config.json libs fty.jar
           git diff --quiet && git diff --staged --quiet || \
             git commit -m "auto sync $(date +%F)"
           git push
+
+      - name: 推送到 Gitee 镜像
+        if: ${{ secrets.GITEE_TOKEN != '' }}
+        run: |
+          git remote remove gitee 2>/dev/null || true
+          git remote add gitee https://muyu1125:${{ secrets.GITEE_TOKEN }}@gitee.com/muyu1125/tvbox-config.git
+          git push gitee main --force
