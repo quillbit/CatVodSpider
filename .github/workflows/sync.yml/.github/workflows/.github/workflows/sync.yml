@@ -1,0 +1,66 @@
+name: Sync and Filter
+
+on:
+  schedule:
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 拉取上游配置
+        run: |
+          curl -sL -o up.json \
+            https://raw.githubusercontent.com/FongMi/CatVodSpider/main/json/config.json
+          ls -la up.json
+
+      - name: 过滤广告站点 + 注入 ads 名单
+        run: |
+          python3 - <<'EOF'
+          import json
+
+          BLOCK = {
+              # "站点A",
+              # "站点B",
+          }
+
+          ADS = [
+              # "ads.example.com",
+          ]
+
+          c = json.load(open('up.json', encoding='utf-8'))
+
+          removed = []
+          if isinstance(c.get('sites'), list):
+              kept = []
+              for s in c['sites']:
+                  nm = s.get('name') or s.get('key') or ''
+                  if nm in BLOCK:
+                      removed.append(nm)
+                      continue
+                  kept.append(s)
+              c['sites'] = kept
+
+          c.setdefault('ads', [])
+          for d in ADS:
+              if d not in c['ads']:
+                  c['ads'].append(d)
+
+          json.dump(c, open('config.json', 'w', encoding='utf-8'),
+                    ensure_ascii=False, indent=2)
+          print('removed:', removed)
+          EOF
+
+      - name: 提交
+        run: |
+          git config user.name bot
+          git config user.email bot@example.com
+          git add config.json
+          git diff --quiet && git diff --staged --quiet || \
+            git commit -m "auto sync $(date +%F)"
+          git push
