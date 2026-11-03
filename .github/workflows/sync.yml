@@ -101,8 +101,13 @@ jobs:
           git push
 
       - name: 推送到 Gitee 镜像
-        if: ${{ secrets.GITEE_TOKEN != '' }}
+        env:
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
         run: |
+          if [ -z "$GITEE_TOKEN" ]; then
+            echo "未配置 GITEE_TOKEN，跳过 Gitee 推送"
+            exit 0
+          fi
           git remote remove gitee 2>/dev/null || true
-          git remote add gitee https://muyu1125:${{ secrets.GITEE_TOKEN }}@gitee.com/muyu1125/tvbox-config.git
+          git remote add gitee https://muyu1125:$GITEE_TOKEN@gitee.com/muyu1125/tvbox-config.git
           git push gitee main --force
