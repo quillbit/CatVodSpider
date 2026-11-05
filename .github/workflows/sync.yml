@@ -15,12 +15,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: 拉取上游配置与影视源聚合配置
+      - name: 下载上游配置与依赖
         run: |
           curl -sL -o up_official.json \
             https://raw.githubusercontent.com/FongMi/CatVodSpider/main/json/config.json
           curl -sL -o box_m_raw.json \
             https://raw.githubusercontent.com/liu673cn/box/main/m.json
+          curl -sL -o gao_js.json \
+            https://raw.githubusercontent.com/gaotianliuyun/gao/main/js.json
           curl -sL -o box.tar.gz \
             https://codeload.github.com/liu673cn/box/tar.gz/refs/heads/main
           tar xzf box.tar.gz
@@ -30,86 +32,83 @@ jobs:
           rm -rf box-main box.tar.gz
           ls -la
 
-      - name: 合并影视源 + 过滤 + 注入 ads
+      - name: 三源合并生成 config.json
         run: |
           python3 - <<'EOF'
-          import json, hashlib
+          import json, urllib.parse
 
-          BLOCK = {
-              # "站点A",
-          }
-          ADS = [
-              # "ads.example.com",
-          ]
+          GAO_BASE = "https://cdn.jsdelivr.net/gh/gaotianliuyun/gao@master/"
+          BOX_BASE = "https://cdn.jsdelivr.net/gh/quillbit/CatVodSpider@main/"
+          GITEE_JAR = "https://gitee.com/muyu1125/tvbox-config/raw/main/"
+          FTY_JAR = "https://gitee.com/muyu1125/tvbox-config/raw/main/fty.jar;md5;3d161697458ecbcd2651a749db761ba1"
+          PG_JAR = "https://gitee.com/muyu1125/tvbox-config/raw/main/pg.jar"
+          GAO_REMOVE = {"Wogg", "Wobg", "yydsys", "蜡笔网盘", "Mogg", "土豆", "小米网盘", "Xinshijue", "Wo4k", "drpy_js_西门[V2]"}
+          BLOCK = set()
 
-          official = json.load(open('up_official.json', encoding='utf-8'))
-          raw_lines = open('box_m_raw.json', encoding='utf-8').read().split('\n')
-          box = json.loads("\n".join(ln for ln in raw_lines if not ln.lstrip().startswith('//')))
+          def map_rel(p, base):
+              if not isinstance(p, str) or not p or p.startswith("http"):
+                  return p
+              return base + urllib.parse.quote(p.lstrip("./"))
 
-          KEYS = set()
-          for s in official.get('sites', []):
-              if s.get('key'):
-                  KEYS.add(s['key'])
+          def map_ext(e, base):
+              if not isinstance(e, str) or not e:
+                  return e
+              return "$$$".join(map_rel(p, base) if p.startswith("./") else p for p in e.split("$$$"))
 
-          kept, removed_block, removed_lib = [], [], []
-          for s in box.get('sites', []):
-              nm = s.get('name') or s.get('key') or ''
-              if nm in BLOCK:
-                  removed_block.append(nm)
-                  continue
-              if s.get('key') in KEYS:
-                  continue
-              bad = False
-              for fld in ('jar', 'api', 'ext'):
-                  v = s.get(fld)
-                  if isinstance(v, str) and v.startswith('./lib/'):
-                      bad = True
-                  elif isinstance(v, dict):
-                      bad = any(isinstance(x, str) and x.startswith('./lib/') for x in v.values())
-                  if bad:
-                      break
-              if bad:
-                  removed_lib.append(nm)
-                  continue
-              kept.append(s)
+          official = json.load(open("up_official.json", encoding="utf-8"))
+          box = json.loads("\n".join(l for l in open("box_m_raw.json", encoding="utf-8").read().split("\n") if not l.lstrip().startswith("//")))
+          gao = json.load(open("gao_js.json", encoding="utf-8"))
 
-          c = json.loads(json.dumps(official))
-          c['sites'] = official['sites'] + kept
+          cfg = {"spider": FTY_JAR, "sites": list(official.get("sites", [])),
+                 "lives": official.get("lives", []), "rules": official.get("rules", []),
+                 "ads": official.get("ads", []), "doh": official.get("doh", [])}
+          KEYS = {s.get("key") or s.get("name") for s in cfg["sites"]}
 
-          c.setdefault('ads', [])
-          for d in ADS:
-              if d not in c['ads']:
-                  c['ads'].append(d)
+          def add_box(s):
+              k = s.get("key") or s.get("name")
+              if not k or k in KEYS or k in BLOCK:
+                  return
+              ns = dict(s)
+              if isinstance(ns.get("jar"), str) and ns["jar"].startswith("./"):
+                  ns["jar"] = GITEE_JAR + urllib.parse.quote(ns["jar"].lstrip("./"))
+              api = ns.get("api", "")
+              if isinstance(api, str) and api.startswith("./"):
+                  ns["api"] = map_rel(api, BOX_BASE)
+              if isinstance(ns.get("ext"), str):
+                  ns["ext"] = map_ext(ns["ext"], BOX_BASE)
+              cfg["sites"].append(ns)
+              KEYS.add(k)
 
-          md5_o = hashlib.md5(open('jar/custom_spider.jar', 'rb').read()).hexdigest()
-          md5_f = hashlib.md5(open('fty.jar', 'rb').read()).hexdigest()
-          c['spider'] = f"./jar/custom_spider.jar;md5;{md5_o};./fty.jar;md5;{md5_f}"
+          def add_gao(s):
+              k = s.get("key") or s.get("name")
+              if not k or k in KEYS or k in BLOCK or k in GAO_REMOVE:
+                  return
+              ns = dict(s)
+              api = ns.get("api", "")
+              if isinstance(api, str):
+                  if api.startswith("./"):
+                      ns["api"] = map_rel(api, GAO_BASE)
+                  elif api and not api.startswith("http"):
+                      ns["jar"] = PG_JAR
+              if isinstance(ns.get("ext"), str):
+                  ns["ext"] = map_ext(ns["ext"], GAO_BASE)
+              cfg["sites"].append(ns)
+              KEYS.add(k)
 
-          json.dump(c, open('config.json', 'w', encoding='utf-8'),
-                    ensure_ascii=False, indent=2)
-          print('影视站点保留:', len(kept))
-          print('拉黑跳过:', removed_block)
-          print('依赖lib跳过:', len(removed_lib))
-          print('spider:', c['spider'])
+          for s in box.get("sites", []):
+              add_box(s)
+          for s in gao.get("sites", []):
+              add_gao(s)
+
+          with open("config.json", "w", encoding="utf-8") as f:
+              json.dump(cfg, f, ensure_ascii=False, indent=1)
+          print("sites:", len(cfg["sites"]))
           EOF
 
-      - name: 提交
+      - name: 提交推送
         run: |
-          git config user.name bot
-          git config user.email bot@example.com
-          git add config.json libs fty.jar
-          git diff --quiet && git diff --staged --quiet || \
-            git commit -m "auto sync $(date +%F)"
+          git config user.name "marvis-bot"
+          git config user.email "marvis-bot@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "auto sync sources $(date -u +'%Y-%m-%d %H:%M')"
           git push
-
-      - name: 推送到 Gitee 镜像
-        env:
-          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
-        run: |
-          if [ -z "$GITEE_TOKEN" ]; then
-            echo "未配置 GITEE_TOKEN，跳过 Gitee 推送"
-            exit 0
-          fi
-          git remote remove gitee 2>/dev/null || true
-          git remote add gitee https://muyu1125:$GITEE_TOKEN@gitee.com/muyu1125/tvbox-config.git
-          git push gitee main --force
