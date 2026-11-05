@@ -5253,18 +5253,12 @@
  ],
  "lives": [
   {
-   "name": "MQiTV",
-   "api": "csp_MQiTV",
-   "ext": [
-    {
-     "name": "Hotel A",
-     "url": "https://127.0.0.1:4433"
-    },
-    {
-     "name": "Hotel B",
-     "url": "http://127.0.0.1"
-    }
-   ]
+   "name": "一锅端直播",
+   "url": "https://pan.vma.cc/down.php/f83b92a24d61858666f13c5db938a292.txt"
+  },
+  {
+   "name": "Fanmingming IPv6",
+   "url": "https://cdn.jsdelivr.net/gh/fanmingming/live@main/tv/m3u/ipv6.m3u"
   }
  ],
  "rules": [
