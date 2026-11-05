@@ -22,7 +22,7 @@ jobs:
           curl -sL -o box_m_raw.json \
             https://raw.githubusercontent.com/liu673cn/box/main/m.json
           curl -sL -o gao_js.json \
-            https://raw.githubusercontent.com/gaotianliuyun/gao/main/js.json
+            https://raw.githubusercontent.com/gaotianliuyun/gao/master/js.json
           curl -sL -o box.tar.gz \
             https://codeload.github.com/liu673cn/box/tar.gz/refs/heads/main
           tar xzf box.tar.gz
