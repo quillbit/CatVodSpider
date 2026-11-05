@@ -59,8 +59,12 @@ jobs:
           box = json.loads("\n".join(l for l in open("box_m_raw.json", encoding="utf-8").read().split("\n") if not l.lstrip().startswith("//")))
           gao = json.load(open("gao_js.json", encoding="utf-8"))
 
+          LIVES = [
+              {"name": "一锅端直播", "url": "https://pan.vma.cc/down.php/f83b92a24d61858666f13c5db938a292.txt"},
+              {"name": "Fanmingming IPv6", "url": "https://cdn.jsdelivr.net/gh/fanmingming/live@main/tv/m3u/ipv6.m3u"},
+          ]
           cfg = {"spider": FTY_JAR, "sites": list(official.get("sites", [])),
-                 "lives": official.get("lives", []), "rules": official.get("rules", []),
+                 "lives": LIVES, "rules": official.get("rules", []),
                  "ads": official.get("ads", []), "doh": official.get("doh", [])}
           KEYS = {s.get("key") or s.get("name") for s in cfg["sites"]}
 
