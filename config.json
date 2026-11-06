@@ -5259,6 +5259,10 @@
   {
    "name": "Fanmingming IPv6",
    "url": "https://cdn.jsdelivr.net/gh/fanmingming/live@main/tv/m3u/ipv6.m3u"
+  },
+  {
+   "name": "IPTV-Org 中国",
+   "url": "https://iptv-org.github.io/iptv/countries/cn.m3u"
   }
  ],
  "rules": [
