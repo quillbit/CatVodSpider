@@ -67,8 +67,6 @@ jobs:
           cfg = {"spider": FTY_JAR, "sites": list(official.get("sites", [])),
                  "lives": LIVES, "rules": official.get("rules", []),
                  "ads": official.get("ads", []), "doh": official.get("doh", [])}
-          # 淘片置顶，确保 FongMi 首次安装默认首页有数据
-          cfg["sites"] = sorted(cfg["sites"], key=lambda s: 0 if (s.get("key") == "taopian" or "淘片" in str(s.get("name", ""))) else 1)
           KEYS = {s.get("key") or s.get("name") for s in cfg["sites"]}
 
           def add_box(s):
@@ -106,6 +104,9 @@ jobs:
               add_box(s)
           for s in gao.get("sites", []):
               add_gao(s)
+
+          # 淘片置顶，确保 FongMi 首次安装默认首页有数据
+          cfg["sites"] = sorted(cfg["sites"], key=lambda s: 0 if (s.get("key") == "taopian" or "淘片" in str(s.get("name", ""))) else 1)
 
           with open("config.json", "w", encoding="utf-8") as f:
               json.dump(cfg, f, ensure_ascii=False, indent=1)
