@@ -15,7 +15,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: 下载上游配置与依赖
+      - name: ä¸è½½ä¸æ¸¸éç½®ä¸ä¾èµ
         run: |
           curl -sL -o up_official.json \
             https://raw.githubusercontent.com/FongMi/CatVodSpider/main/json/config.json
@@ -32,7 +32,7 @@ jobs:
           rm -rf box-main box.tar.gz
           ls -la
 
-      - name: 三源合并生成 config.json
+      - name: ä¸æºåå¹¶çæ config.json
         run: |
           python3 - <<'EOF'
           import json, urllib.parse
@@ -42,7 +42,7 @@ jobs:
           GITEE_JAR = "https://gitee.com/muyu1125/tvbox-config/raw/main/"
           FTY_JAR = "https://gitee.com/muyu1125/tvbox-config/raw/main/fty.jar;md5;3d161697458ecbcd2651a749db761ba1"
           PG_JAR = "https://gitee.com/muyu1125/tvbox-config/raw/main/pg.jar"
-          GAO_REMOVE = {"Wogg", "Wobg", "yydsys", "蜡笔网盘", "Mogg", "土豆", "小米网盘", "Xinshijue", "Wo4k", "drpy_js_西门[V2]"}
+          GAO_REMOVE = {"Wogg", "Wobg", "yydsys", "è¡ç¬ç½ç", "Mogg", "åè±", "å°ç±³ç½ç", "Xinshijue", "Wo4k", "drpy_js_è¥¿é¨[V2]"}
           BLOCK = set()
 
           def map_rel(p, base):
@@ -60,9 +60,9 @@ jobs:
           gao = json.load(open("gao_js.json", encoding="utf-8"))
 
           LIVES = [
-              {"name": "一锅端直播", "url": "https://pan.vma.cc/down.php/f83b92a24d61858666f13c5db938a292.txt"},
+              {"name": "ä¸éç«¯ç´æ­", "url": "https://pan.vma.cc/down.php/f83b92a24d61858666f13c5db938a292.txt"},
               {"name": "Fanmingming IPv6", "url": "https://cdn.jsdelivr.net/gh/fanmingming/live@main/tv/m3u/ipv6.m3u"},
-              {"name": "IPTV-Org 中国", "url": "https://iptv-org.github.io/iptv/countries/cn.m3u"},
+              {"name": "IPTV-Org ä¸­å½", "url": "https://iptv-org.github.io/iptv/countries/cn.m3u"},
           ]
           cfg = {"spider": FTY_JAR, "sites": list(official.get("sites", [])),
                  "lives": LIVES, "rules": official.get("rules", []),
@@ -105,15 +105,19 @@ jobs:
           for s in gao.get("sites", []):
               add_gao(s)
 
-          # 淘片置顶，确保 FongMi 首次安装默认首页有数据
-          cfg["sites"] = sorted(cfg["sites"], key=lambda s: 0 if (s.get("key") == "taopian" or "淘片" in str(s.get("name", ""))) else 1)
+          # æ·çç½®é¡¶ï¼ç¡®ä¿ FongMi é¦æ¬¡å®è£é»è®¤é¦é¡µææ°æ®
+          cfg["sites"] = sorted(cfg["sites"], key=lambda s: 0 if (s.get("key") == "taopian" or "æ·ç" in str(s.get("name", ""))) else 1)
+
+          # å¨ç«å¯æï¼ç»ä¸ searchable=1ï¼æå¤§åå½±è§ä»/FongMi æç´¢æ± 
+          for s in cfg["sites"]:
+              s["searchable"] = 1
 
           with open("config.json", "w", encoding="utf-8") as f:
               json.dump(cfg, f, ensure_ascii=False, indent=1)
           print("sites:", len(cfg["sites"]))
           EOF
 
-      - name: 提交推送
+      - name: æäº¤æ¨é
         run: |
           git config user.name "marvis-bot"
           git config user.email "marvis-bot@users.noreply.github.com"
