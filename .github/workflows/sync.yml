@@ -62,10 +62,13 @@ jobs:
           LIVES = [
               {"name": "一锅端直播", "url": "https://pan.vma.cc/down.php/f83b92a24d61858666f13c5db938a292.txt"},
               {"name": "Fanmingming IPv6", "url": "https://cdn.jsdelivr.net/gh/fanmingming/live@main/tv/m3u/ipv6.m3u"},
+              {"name": "IPTV-Org 中国", "url": "https://iptv-org.github.io/iptv/countries/cn.m3u"},
           ]
           cfg = {"spider": FTY_JAR, "sites": list(official.get("sites", [])),
                  "lives": LIVES, "rules": official.get("rules", []),
                  "ads": official.get("ads", []), "doh": official.get("doh", [])}
+          # 淘片置顶，确保 FongMi 首次安装默认首页有数据
+          cfg["sites"] = sorted(cfg["sites"], key=lambda s: 0 if (s.get("key") == "taopian" or "淘片" in str(s.get("name", ""))) else 1)
           KEYS = {s.get("key") or s.get("name") for s in cfg["sites"]}
 
           def add_box(s):
