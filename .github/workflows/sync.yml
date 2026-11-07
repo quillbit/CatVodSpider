@@ -17,7 +17,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: ä¸è½½ä¸æ¸¸éç½®ä¸ä¾èµ
+      - name: 下载上游配置与依赖
         run: |
           curl -sL -o up_official.json \
             https://raw.githubusercontent.com/FongMi/CatVodSpider/main/json/config.json
@@ -34,7 +34,7 @@ jobs:
           rm -rf box-main box.tar.gz
           ls -la
 
-      - name: ä¸æºåå¹¶çæ config.json
+      - name: 三源合并生成 config.json
         run: |
           python3 - <<'EOF'
           import json, urllib.parse
@@ -44,7 +44,7 @@ jobs:
           GITEE_JAR = "https://gitee.com/muyu1125/tvbox-config/raw/main/"
           FTY_JAR = "https://gitee.com/muyu1125/tvbox-config/raw/main/fty.jar;md5;3d161697458ecbcd2651a749db761ba1"
           PG_JAR = "https://gitee.com/muyu1125/tvbox-config/raw/main/pg.jar"
-          GAO_REMOVE = {"Wogg", "Wobg", "yydsys", "è¡ç¬ç½ç", "Mogg", "åè±", "å°ç±³ç½ç", "Xinshijue", "Wo4k", "drpy_js_è¥¿é¨[V2]"}
+          GAO_REMOVE = {"Wogg", "Wobg", "yydsys", "蜡笔网盘", "Mogg", "土豆", "小米网盘", "Xinshijue", "Wo4k", "drpy_js_西门[V2]"}
           BLOCK = set()
 
           def map_rel(p, base):
@@ -62,9 +62,9 @@ jobs:
           gao = json.load(open("gao_js.json", encoding="utf-8"))
 
           LIVES = [
-              {"name": "ä¸éç«¯ç´æ­", "url": "https://pan.vma.cc/down.php/f83b92a24d61858666f13c5db938a292.txt"},
+              {"name": "一锅端直播", "url": "https://pan.vma.cc/down.php/f83b92a24d61858666f13c5db938a292.txt"},
               {"name": "Fanmingming IPv6", "url": "https://cdn.jsdelivr.net/gh/fanmingming/live@main/tv/m3u/ipv6.m3u"},
-              {"name": "IPTV-Org ä¸­å½", "url": "https://iptv-org.github.io/iptv/countries/cn.m3u"},
+              {"name": "IPTV-Org 中国", "url": "https://iptv-org.github.io/iptv/countries/cn.m3u"},
           ]
           cfg = {"spider": FTY_JAR, "sites": list(official.get("sites", [])),
                  "lives": LIVES, "rules": official.get("rules", []),
@@ -77,52 +77,145 @@ jobs:
                   return
               ns = dict(s)
               if isinstance(ns.get("jar"), str) and ns["jar"].startswith("./"):
-                  ns["jar"] = GITEE_JAR + urllib.parse.quote(ns["jar"].lstrip("./"))
-              api = ns.get("api", "")
-              if isinstance(api, str) and api.startswith("./"):
-                  ns["api"] = map_rel(api, BOX_BASE)
-              if isinstance(ns.get("ext"), str):
-                  ns["ext"] = map_ext(ns["ext"], BOX_BASE)
-              cfg["sites"].append(ns)
-              KEYS.add(k)
+                  ns["jar"] = GITEE_JAR
+�\�X��\��K�][�J��Ț�\��K���\
+��ȊJB�\HH�˙�]
+�\H���B�Y�\�[��[��J\K��H[�\K��\���]
+��ȊN����Ș\H�HHX\ܙ[
+\K��АT�JB�Y�\�[��[��J�˙�]
+�^�K��N����ș^�HHX\�^
+��ș^�K��АT�JB�ٙ�Ȝ�]\ȗK�\[�
+��B��VT˘Y
+�B��Y�Y��[��N���H˙�]
+��^H�H܈˙�]
+��[YH�B�Y����܈�[��VT�܈�[�����܈�[��S�ԑSSՑN���]\�����HX�
+�B�\HH�˙�]
+�\H���B�Y�\�[��[��J\K��N��Y�\K��\���]
+��ȊN����Ș\H�HHX\ܙ[
+\K�S�АT�JB�[Y�\H[���\K��\���]
+��N����Ț�\��HH�ҐT��Y�\�[��[��J�˙�]
+�^�K��N����ș^�HHX\�^
+��ș^�K�S�АT�JB�ٙ�Ȝ�]\ȗK�\[�
+��B��VT˘Y
+�B���܈�[�����]
+��]\ȋ�JN��Y؛�
+�B��܈�[��[˙�]
+��]\ȋ�JN��Y��[��B���9��9�a��k�hm��#9�k�/�H�ۙ�ZH:i���(yk�z(�zn�:+�:i��hmy�"y�l9�k��ٙ�Ȝ�]\ȗHH�ܝY
+ٙ�Ȝ�]\ȗK�^O[[X�HΈY�
+˙�]
+��^H�HOH�[�X[��܈���9�aȈ[���˙�]
+��[YH���JJH[�HJB���9aj9��yc���';�&����. �X\��X�OL{�#9� 9i)�c%�olz)�.��ћۙ�ZH9�'9�(��h��܈�[�ٙ�Ȝ�]\ȗN���Ȝ�X\��X�H�HHB���]�[���ۙ�Y˚��ۈ��ȋ[���[��H�]�N�H\������ۋ�[\
+ٙ��[��\�W�\��ZOQ�[�K[�[�LJB��[�
+��]\Έ�[�ٙ�Ȝ�]\ȗJJB�Sт��H�[YN�9��9.�9��:` B��[����]�ۙ�Y�\�\���[YH�X\��\�X�����]�ۙ�Y�\�\��[XZ[�X\��\�X��\�\�˛�ܙ\K��]X����H���]YPB��]Y��KX�X�YK\]ZY]�]��[Z][H�]]��[����\��\�	
+]H]H
+��VKI[KIY	R�SI�H���]\�name: Sync and Filter
 
-          def add_gao(s):
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 下载上游配置与依赖
+        run: |
+          curl -sL -o up_official.json \
+            https://raw.githubusercontent.com/FongMi/CatVodSpider/main/json/config.json
+          curl -sL -o box_m_raw.json \
+            https://raw.githubusercontent.com/liu673cn/box/main/m.json
+          curl -sL -o gao_js.json \
+            https://raw.githubusercontent.com/gaotianliuyun/gao/master/js.json
+          curl -sL -o box.tar.gz \
+            https://codeload.github.com/liu673cn/box/tar.gz/refs/heads/main
+          tar xzf box.tar.gz
+          rm -rf libs fty.jar
+          cp -r box-main/libs ./libs
+          cp box-main/fty.jar ./fty.jar
+          rm -rf box-main box.tar.gz
+          ls -la
+
+      - name: 三源合并生成 config.json
+        run: |
+          python3 - <<'EOF'
+          import json, urllib.parse
+
+          GAO_BASE = "https://cdn.jsdelivr.net/gh/gaotianliuyun/gao@master/"
+          BOX_BASE = "https://cdn.jsdelivr.net/gh/quillbit/CatVodSpider@main/"
+          GITEE_JAR = "https://gitee.com/muyu1125/tvbox-config/raw/main/"
+          FTY_JAR = "https://gitee.com/muyu1125/tvbox-config/raw/main/fty.jar;md5;3d161697458ecbcd2651a749db761ba1"
+          PG_JAR = "https://gitee.com/muyu1125/tvbox-config/raw/main/pg.jar"
+          GAO_REMOVE = {"Wogg", "Wobg", "yydsys", "蜡笔网盘", "Mogg", "土豆", "小米网盘", "Xinshijue", "Wo4k", "drpy_js_西门[V2]"}
+          BLOCK = set()
+
+          def map_rel(p, base):
+              if not isinstance(p, str) or not p or p.startswith("http"):
+                  return p
+              return base + urllib.parse.quote(p.lstrip("./"))
+
+          def map_ext(e, base):
+              if not isinstance(e, str) or not e:
+                  return e
+              return "$$$".join(map_rel(p, base) if p.startswith("./") else p for p in e.split("$$$"))
+
+          official = json.load(open("up_official.json", encoding="utf-8"))
+          box = json.loads("\n".join(l for l in open("box_m_raw.json", encoding="utf-8").read().split("\n") if not l.lstrip().startswith("//")))
+          gao = json.load(open("gao_js.json", encoding="utf-8"))
+
+          LIVES = [
+              {"name": "一锅端直播", "url": "https://pan.vma.cc/down.php/f83b92a24d61858666f13c5db938a292.txt"},
+              {"name": "Fanmingming IPv6", "url": "https://cdn.jsdelivr.net/gh/fanmingming/live@main/tv/m3u/ipv6.m3u"},
+              {"name": "IPTV-Org 中国", "url": "https://iptv-org.github.io/iptv/countries/cn.m3u"},
+          ]
+          cfg = {"spider": FTY_JAR, "sites": list(official.get("sites", [])),
+                 "lives": LIVES, "rules": official.get("rules", []),
+                 "ads": official.get("ads", []), "doh": official.get("doh", [])}
+          KEYS = {s.get("key") or s.get("name") for s in cfg["sites"]}
+
+          def add_box(s):
               k = s.get("key") or s.get("name")
-              if not k or k in KEYS or k in BLOCK or k in GAO_REMOVE:
+              if not k or k in KEYS or k in BLOCK:
                   return
               ns = dict(s)
-              api = ns.get("api", "")
-              if isinstance(api, str):
-                  if api.startswith("./"):
-                      ns["api"] = map_rel(api, GAO_BASE)
-                  elif api and not api.startswith("http"):
-                      ns["jar"] = PG_JAR
-              if isinstance(ns.get("ext"), str):
-                  ns["ext"] = map_ext(ns["ext"], GAO_BASE)
-              cfg["sites"].append(ns)
-              KEYS.add(k)
-
-          for s in box.get("sites", []):
-              add_box(s)
-          for s in gao.get("sites", []):
-              add_gao(s)
-
-          # æ·çç½®é¡¶ï¼ç¡®ä¿ FongMi é¦æ¬¡å®è£é»è®¤é¦é¡µææ°æ®
-          cfg["sites"] = sorted(cfg["sites"], key=lambda s: 0 if (s.get("key") == "taopian" or "æ·ç" in str(s.get("name", ""))) else 1)
-
-          # å¨ç«å¯æï¼ç»ä¸ searchable=1ï¼æå¤§åå½±è§ä»/FongMi æç´¢æ± 
-          for s in cfg["sites"]:
-              s["searchable"] = 1
-
-          with open("config.json", "w", encoding="utf-8") as f:
-              json.dump(cfg, f, ensure_ascii=False, indent=1)
-          print("sites:", len(cfg["sites"]))
-          EOF
-
-      - name: æäº¤æ¨é
-        run: |
-          git config user.name "marvis-bot"
-          git config user.email "marvis-bot@users.noreply.github.com"
-          git add -A
-          git diff --cached --quiet || git commit -m "auto sync sources $(date -u +'%Y-%m-%d %H:%M')"
-          git push
+              if isinstance(ns.get("jar"), str) and ns["jar"].startswith("./"):
+                  ns["jar"] = GITEE_JAR
+�\�X��\��K�][�J��Ț�\��K���\
+��ȊJB�\HH�˙�]
+�\H���B�Y�\�[��[��J\K��H[�\K��\���]
+��ȊN����Ș\H�HHX\ܙ[
+\K��АT�JB�Y�\�[��[��J�˙�]
+�^�K��N����ș^�HHX\�^
+��ș^�K��АT�JB�ٙ�Ȝ�]\ȗK�\[�
+��B��VT˘Y
+�B��Y�Y��[��N���H˙�]
+��^H�H܈˙�]
+��[YH�B�Y����܈�[��VT�܈�[�����܈�[��S�ԑSSՑN���]\�����HX�
+�B�\HH�˙�]
+�\H���B�Y�\�[��[��J\K��N��Y�\K��\���]
+��ȊN����Ș\H�HHX\ܙ[
+\K�S�АT�JB�[Y�\H[���\K��\���]
+��N����Ț�\��HH�ҐT��Y�\�[��[��J�˙�]
+�^�K��N����ș^�HHX\�^
+��ș^�K�S�АT�JB�ٙ�Ȝ�]\ȗK�\[�
+��B��VT˘Y
+�B���܈�[�����]
+��]\ȋ�JN��Y؛�
+�B��܈�[��[˙�]
+��]\ȋ�JN��Y��[��B���9��9�a��k�hm��#9�k�/�H�ۙ�ZH:i���(yk�z(�zn�:+�:i��hmy�"y�l9�k��ٙ�Ȝ�]\ȗHH�ܝY
+ٙ�Ȝ�]\ȗK�^O[[X�HΈY�
+˙�]
+��^H�HOH�[�X[��܈���9�aȈ[���˙�]
+��[YH���JJH[�HJB���9aj9��yc���';�&����. �X\��X�OL{�#9� 9i)�c%�olz)�.��ћۙ�ZH9�'9�(��h��܈�[�ٙ�Ȝ�]\ȗN���Ȝ�X\��X�H�HHB���]�[���ۙ�Y˚��ۈ��ȋ[���[��H�]�N�H\������ۋ�[\
+ٙ��[��\�W�\��ZOQ�[�K[�[�LJB��[�
+��]\Έ�[�ٙ�Ȝ�]\ȗJJB�Sт��H�[YN�9��9.�9��:` B��[����]�ۙ�Y�\�\���[YH�X\��\�X�����]�ۙ�Y�\�\��[XZ[�X\��\�X��\�\�˛�ܙ\K��]X����H���]YPB��]Y��KX�X�YK\]ZY]�]��[Z][H�]]��[����\��\�	
+]H]H
+��VKI[KIY	R�SI�H���]\�
