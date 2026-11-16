@@ -34,7 +34,7 @@ jobs:
           rm -rf box-main box.tar.gz
           ls -la
 
-      - name: 三源合并生成 config.json
+      - name: 预设基座 + 三源合并生成 config.json
         run: |
           python3 - <<'EOF'
           import json, urllib.parse
@@ -45,7 +45,18 @@ jobs:
           FTY_JAR = "https://gitee.com/muyu1125/tvbox-config/raw/main/fty.jar;md5;3d161697458ecbcd2651a749db761ba1"
           PG_JAR = "https://gitee.com/muyu1125/tvbox-config/raw/main/pg.jar"
           GAO_REMOVE = {"Wogg", "Wobg", "yydsys", "蜡笔网盘", "Mogg", "土豆", "小米网盘", "Xinshijue", "Wo4k", "drpy_js_西门[V2]"}
-          BLOCK = set()
+
+          # preset_extra.json：人工筛选后的新增站基座（已映射 jsDelivr 绝对 URL、已通过直连校验）
+          preset = json.load(open("preset_extra.json", encoding="utf-8"))
+          BLOCK = set(preset.get("excluded_keys", []))
+          BLOCK_DOMAINS = preset.get("block_domains", ["xxk88.ueqf1n.top", "c93bfw4j.7jhghf.cn"])
+
+          def blocked(s):
+              try:
+                  blob = json.dumps(s, ensure_ascii=False)
+              except Exception:
+                  return False
+              return any(d in blob for d in BLOCK_DOMAINS)
 
           def map_rel(p, base):
               if not isinstance(p, str) or not p or p.startswith("http"):
@@ -66,14 +77,14 @@ jobs:
               {"name": "Fanmingming IPv6", "url": "https://cdn.jsdelivr.net/gh/fanmingming/live@main/tv/m3u/ipv6.m3u"},
               {"name": "IPTV-Org 中国", "url": "https://iptv-org.github.io/iptv/countries/cn.m3u"},
           ]
-          cfg = {"spider": FTY_JAR, "sites": list(official.get("sites", [])),
+          cfg = {"spider": FTY_JAR, "sites": [dict(s) for s in preset.get("sites", [])],
                  "lives": LIVES, "rules": official.get("rules", []),
                  "ads": official.get("ads", []), "doh": official.get("doh", [])}
           KEYS = {s.get("key") or s.get("name") for s in cfg["sites"]}
 
           def add_box(s):
               k = s.get("key") or s.get("name")
-              if not k or k in KEYS or k in BLOCK:
+              if not k or k in KEYS or k in BLOCK or blocked(s):
                   return
               ns = dict(s)
               if isinstance(ns.get("jar"), str) and ns["jar"].startswith("./"):
@@ -88,7 +99,7 @@ jobs:
 
           def add_gao(s):
               k = s.get("key") or s.get("name")
-              if not k or k in KEYS or k in BLOCK or k in GAO_REMOVE:
+              if not k or k in KEYS or k in BLOCK or k in GAO_REMOVE or blocked(s):
                   return
               ns = dict(s)
               api = ns.get("api", "")
