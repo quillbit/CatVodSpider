@@ -3,6 +3,7 @@ name: Sync and Filter
 on:
   push:
     branches: [main]
+    paths-ignore: ['config.json']
   schedule:
     - cron: '0 18 * * *'
   workflow_dispatch:
@@ -34,8 +35,9 @@ jobs:
           rm -rf box-main box.tar.gz
           ls -la
 
-      - name: 预设基座 + 三源合并生成 config.json
+      - name: 预设基座 + 三源合并生成 config.json（config.json 已存在则跳过，保留手动精简版）
         run: |
+          if [ ! -f config.json ]; then
           python3 - <<'EOF'
           import json, urllib.parse
 
@@ -129,6 +131,7 @@ jobs:
               json.dump(cfg, f, ensure_ascii=False, indent=1)
           print("sites:", len(cfg["sites"]))
           EOF
+          fi
 
       - name: 提交推送
         run: |
