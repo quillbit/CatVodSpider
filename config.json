@@ -47,53 +47,6 @@
   ],
   "sites": [
     {
-      "key": "taopian",
-      "name": "🕹️淘片┃采集",
-      "type": 1,
-      "api": "https://taopianapi.com/cjapi/mc/vod/json.html",
-      "searchable": 1,
-      "filterable": 0,
-      "categories": [
-        "动漫/国产动漫",
-        "动漫/日本动漫",
-        "动漫/欧美动漫",
-        "动漫/海外动漫",
-        "综艺/大陆综艺",
-        "综艺/港台综艺",
-        "综艺/日韩综艺",
-        "综艺/欧美综艺",
-        "综艺/海外综艺",
-        "电视剧/国产剧",
-        "电视剧/香港剧",
-        "电视剧/欧美剧",
-        "电视剧/海外剧",
-        "电视剧/韩国剧",
-        "电视剧/日本剧",
-        "电视剧/泰国剧",
-        "电视剧/台湾剧",
-        "电影/战争片",
-        "电影/科幻片",
-        "电影/奇幻片",
-        "电影/冒险片",
-        "电影/动画片",
-        "电影/喜剧片",
-        "电影/动作片",
-        "电影/爱情片",
-        "电影/恐怖片",
-        "电影/惊悚片",
-        "电影/剧情片",
-        "电影/悬疑片",
-        "电影/纪录片"
-      ]
-    },
-    {
-      "key": "tv_back-023_taopian",
-      "name": "🕹️淘片┃采集·ok线路1",
-      "type": 1,
-      "searchable": 1,
-      "api": "https://taopianapi.com/cjapi/mc/vod/json.html"
-    },
-    {
       "key": "csp_XYQBiu_斗鱼",
       "name": "🐟┃斗鱼┃直播",
       "playerType": 1,
@@ -410,37 +363,6 @@
       "searchable": 1
     },
     {
-      "key": "暴风采集",
-      "name": "🌪️暴风影音",
-      "type": 1,
-      "api": "https://app.bfzyapi.com/api.php/provide/vod/",
-      "playUrl": "",
-      "categories": [
-        "国产剧",
-        "国产动漫",
-        "动作片",
-        "科幻片",
-        "剧情片",
-        "喜剧片",
-        "爱情片",
-        "恐怖片",
-        "战争片",
-        "香港剧",
-        "台湾剧",
-        "日本剧",
-        "欧美剧",
-        "泰国剧",
-        "日本动漫",
-        "综艺频道",
-        "大陆综艺",
-        "港台综艺",
-        "日本综艺",
-        "新马泰综艺",
-        "纪录片"
-      ],
-      "searchable": 1
-    },
-    {
       "key": "js_酷吧",
       "name": "😎酷吧磁力┃Js",
       "type": 3,
@@ -619,42 +541,6 @@
       "quickSearch": 0,
       "filterable": 0,
       "ext": "https://cdn.jsdelivr.net/gh/quillbit/CatVodSpider@main/libs/js/%E5%93%94%E5%93%A9%E7%9B%B4%E6%92%AD.js"
-    },
-    {
-      "key": "csp_SNzy",
-      "name": "🐉┃索尼┃高清",
-      "type": 1,
-      "api": "https://suoniapi.com/api.php/provide/vod/?ac=list",
-      "searchable": 1,
-      "quickSearch": 1,
-      "filterable": 1,
-      "categories": [
-        "动作片",
-        "喜剧片",
-        "科幻片",
-        "恐怖片",
-        "爱情片",
-        "剧情片",
-        "战争片",
-        "记录片",
-        "国产剧",
-        "欧美剧",
-        "香港剧",
-        "韩国剧",
-        "台湾剧",
-        "日本剧",
-        "海外剧",
-        "泰国剧",
-        "国产动漫",
-        "日韩动漫",
-        "欧美动漫",
-        "港台动漫",
-        "海外动漫",
-        "大陆综艺",
-        "港台综艺",
-        "日韩综艺",
-        "欧美综艺"
-      ]
     },
     {
       "key": "drpy_js_爱看",
@@ -1286,7 +1172,7 @@
       "name": "影视 | 思古影视[V2]",
       "type": 3,
       "api": "https://cdn.jsdelivr.net/gh/gaotianliuyun/gao@master/lib/drpy2.min.js",
-      "ext": "https://cdn.jsdelivr.net/gh/gaotianliuyun/gao@master/js/%E6%80%9D%E5%8F%A4%E5%BD%B1%E8%A7%86%5BV2%5D.js",
+      "ext": "https://ghproxy.net/https://raw.githubusercontent.com/gaotianliuyun/gao/master/js/%E6%80%9D%E5%8F%A4%E5%BD%B1%E8%A7%86%5BV2%5D.js",
       "searchable": 1
     },
     {
@@ -2659,20 +2545,6 @@
       "searchable": 1
     },
     {
-      "key": "tv_back-023_csp_SNzy",
-      "name": "🐉┃索尼┃高清·ok线路1",
-      "type": 1,
-      "searchable": 1,
-      "api": "https://suoniapi.com/api.php/provide/vod/?ac=list"
-    },
-    {
-      "key": "量子",
-      "name": "影视 • 量子[直连]",
-      "type": 1,
-      "searchable": 1,
-      "api": "https://cj.lziapi.com/api.php/provide/vod/"
-    },
-    {
       "key": "drpy_js_天天视频",
       "name": "起飞 | 天天视频[js]",
       "type": 3,
@@ -2703,13 +2575,6 @@
       "api": "https://www.huyaapi.com/api.php/provide/vod/from/hym3u8"
     },
     {
-      "key": "tv_back-023_百度",
-      "name": "🎏百度┃采集·ok线路1",
-      "type": 1,
-      "searchable": 1,
-      "api": "https://api.apibdzy.com/api.php/provide/vod/?ac=list"
-    },
-    {
       "key": "天涯采集",
       "name": "影视 • 天涯",
       "type": 1,
@@ -2717,60 +2582,11 @@
       "api": "http://tyyszy.com/api.php/provide/vod"
     },
     {
-      "key": "暴風",
-      "name": "影视 • 暴風[直连]",
-      "type": 1,
-      "searchable": 1,
-      "api": "https://bfzyapi.com/api.php/provide/vod/?ac=list"
-    },
-    {
-      "key": "暴风",
-      "name": "暴风",
-      "type": 1,
-      "searchable": 1,
-      "api": "https://bfzyapi.com/api.php/provide/vod"
-    },
-    {
-      "key": "索尼",
-      "name": "影视 • 索尼[直连]",
-      "type": 0,
-      "searchable": 1,
-      "api": "https://suoniapi.com/api.php/provide/vod/at/xml/"
-    },
-    {
-      "key": "量子影视",
-      "name": "量子影视",
-      "type": 1,
-      "searchable": 1,
-      "api": "https://cj.lziapi.com/api.php/provide/vod/from/lzm3u8/at/json"
-    },
-    {
-      "key": "率率",
-      "name": "影视 • 率率[直连]",
-      "type": 1,
-      "searchable": 1,
-      "api": "https://suoniapi.com/api.php/provide/vod/?ac=list"
-    },
-    {
-      "key": "暴风影视",
-      "name": "暴风影视",
-      "type": 1,
-      "searchable": 1,
-      "api": "http://by.bfzyapi.com/api.php/provide/vod/at/json"
-    },
-    {
       "key": "360资源",
       "name": "360资源",
       "type": 1,
       "searchable": 1,
       "api": "https://360zy.com/api.php/provide/vod/at/json"
-    },
-    {
-      "key": "U酷影视",
-      "name": "U酷影视",
-      "type": 1,
-      "searchable": 1,
-      "api": "https://api.ukuapi88.com/api.php/provide/vod/from/ukm3u8/at/json"
     },
     {
       "key": "OK影视",
